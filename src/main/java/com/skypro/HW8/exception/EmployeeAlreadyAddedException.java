@@ -9,3 +9,4 @@ public class EmployeeAlreadyAddedException extends RuntimeException {
         super(message);
     }
 }
+

@@ -1,22 +1,23 @@
 package com.skypro.HW8.service;
 
 import com.skypro.HW8.employee.Employee;
+import com.skypro.HW8.exception.EmployeeAlreadyAddedException;
+import com.skypro.HW8.exception.EmployeeNotFoundException;
+import com.skypro.HW8.exception.EmployeeStorageIsFullException;
 
-import java.util.Collection;
 import java.util.List;
 
 public interface EmployeeService {
 
-    List<Employee> getEmployeesByDepartmentMax(Integer departmentId);
+    Employee add(String firstName, String lastName)
+            throws EmployeeStorageIsFullException, EmployeeAlreadyAddedException;
 
-    List <Employee>  getEmployeesByDepartmentMin(Integer departmentId);
+    Employee remove(String firstName, String lastName)
+            throws EmployeeNotFoundException;
 
-    List <Employee>  getEmployeesByDepartment(Integer departmentId);
+    Employee find(String firstName, String lastName)
+            throws EmployeeNotFoundException;
 
-
-
-    Collection<Employee> getAll();
-
-    void addEmployees(Employee employee);
+    List<Employee> getAll();
 
 }

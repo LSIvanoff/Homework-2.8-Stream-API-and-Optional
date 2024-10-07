@@ -1,106 +1,71 @@
 package com.skypro.HW8.service;
 
 import com.skypro.HW8.employee.Employee;
-
+import com.skypro.HW8.exception.EmployeeAlreadyAddedException;
+import com.skypro.HW8.exception.EmployeeNotFoundException;
+import com.skypro.HW8.exception.EmployeeStorageIsFullException;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
-
 public class EmployeeServiceImpl implements EmployeeService {
-    public Map<String, Employee> employees = new HashMap<>(Map.of(
-            "1",
-            new Employee("Иван",
-                    "Иванов",
-                    1,
-                    100000 ),
+    private final int LIST_SIZE = 10;
 
-
-            "2",
-            new Employee("Петр",
-                    "Петров",
-                    2,
-                    200000 ),
-
-            "3",
-            new Employee("Василий",
-                    "Васильев",
-                    3,
-                    131000),
-
-            "4",
-            new Employee("Виктор",
-                    "Викторов",
-                    3,
-                    141000 ),
-
-            "5",
-            new Employee(" Ира",
-                    "Год",
-                    4,
-                    145000 )
-    ));
-    String[] departments   = {
-            "IT",
-            "руководящий",
-            "юридический",
-            "отдел закупок",
-            "финансовый",
-
-    };
-    Map<String,Integer> departmentsCodes = Map.of (
-            "IT", 1,
-            "руководящий", 1,
-            "юридический",2,
-            "отдел закупок",3,
-            "финансовый",4
-    );
-
+    private final List<Employee> employees = new ArrayList<>(List.of(
+            new Employee("Adam", "Adamov", 2000, 1),
+            new Employee("Boris", "Borisov", 1000, 1),
+            new Employee("Vladimir", "Vladimirov", 3000, 2),
+            new Employee("Gavril", "Gavriliev", 5000, 2),
+            new Employee("Dmitry", "Dmitriev", 4000, 2),
+            new Employee("Egor", "Egorov", 10000, 3),
+            new Employee("Zachar", "Zacharov", 10000, 3),
+            new Employee("Ivan", "Ivanov", 10000, 3)));
 
 
     @Override
-    public List <Employee>  getEmployeesByDepartmentMin(Integer departmentId) {
-
-        return employees.values().stream()
-                .filter(e -> e.getDepartmentId().contains(departmentId))
-                .collect(Collectors.toList());
-
+    public Employee add(String firstName, String lastName)
+            throws EmployeeStorageIsFullException, EmployeeAlreadyAddedException {
+        Employee employee = new Employee(firstName, lastName);
+        if (employees.size() >= LIST_SIZE) {
+            throw new EmployeeStorageIsFullException("The list size is exceeded!!!");
+        }
+        if (employees.contains(employee)) {
+            throw new EmployeeAlreadyAddedException("Such an employee already exists!!!");
+        }
+        employees.add(employee);
+        return employee;
     }
 
     @Override
-    public List <Employee>  getEmployeesByDepartmentMax(Integer departmentId) {
+    public Employee remove(String firstName, String lastName)
+            throws EmployeeNotFoundException {
 
-        return  employees.values().stream()
-                .filter(e -> e.getDepartmentId().contains(departmentId))
-                .collect(Collectors.toList());
-//                .collect(Collectors.toList());
+        Employee employee = new Employee(firstName, lastName);
 
+        if (!employees.contains(employee)) {
+            throw new EmployeeNotFoundException("This employee has not been found");
+        }
+        employees.remove(employee);
+        return employee;
     }
 
     @Override
-    public List <Employee>  getEmployeesByDepartment(Integer departmentId) {
+    public Employee find(String firstName, String lastName)
+            throws EmployeeNotFoundException {
 
-        return employees.values().stream()
-                .filter(e -> e.getDepartmentId().contains(departmentId))
-                .collect(Collectors.toList());
+        Employee employee = new Employee(firstName, lastName);
 
+        if (employees.contains(employee)) {
+            return employee;
+        }
+        throw new EmployeeNotFoundException("This employee has not been found");
     }
 
-
-
     @Override
+    public List<Employee> getAll() {
+        return employees;
 
-    public Collection <Employee> getAll() {
-        return Collections.unmodifiableCollection(employees.values());
-    }
-
-
-
-    @Override
-
-    public void addEmployees(Employee employee) {
-        employees.put(employee.getDepartmentId().toString(), employee);
     }
 }
